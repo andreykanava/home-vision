@@ -1,6 +1,6 @@
 from curses import KEY_UP, KEY_DOWN, KEY_ENTER
 
-def key_track(stdscr, menu, selected = 0):
+def menu_select(stdscr, menu, selected = 0):
     key = stdscr.getch()
 
     if key == KEY_UP and selected > 0:

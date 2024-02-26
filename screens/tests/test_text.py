@@ -8,8 +8,8 @@ def text_screen(stdscr, text):
         stdscr.clear()
         curses.curs_set(0)
         text2 = "Line 2"
-        text_ui.add_text(stdscr, align.center_vertical, text) 
-        #text_ui.add_text(stdscr, align.center_vertical, text2, row=-3)
+        text_ui.add_text(stdscr, align.center_vertical_vertical, text) 
+        #text_ui.add_text(stdscr, align.center_vertical_vertical, text2, row=-3)
         stdscr.refresh()
         time.sleep(1)
 
