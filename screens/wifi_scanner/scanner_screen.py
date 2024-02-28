@@ -12,11 +12,15 @@ def scanner_screen(stdscr, interface):
 
 
     wifis = scanner_utils.scan_wifi_networks(interface)
-
-    for i in wifis:
-        text_ui.add_text(stdscr, align.center_vertical, i)
-
-
+    row = 0
+    for key, network_info in wifis.items():
+        # Проверка наличия ключа 'ESSID' в словаре, если отсутствует, устанавливаем пустую строку
+        essid = network_info.get('ESSID', '-')
+        # Формируем строку с информацией о сети
+        info_str = f"ESSID: {essid}, Address: {network_info['Address']}, Signal level: {network_info['Signal level']}, Quality: {network_info['Quality']}, Encryption: {'Yes' if network_info['Encryption'] else 'No'}"
+        text_ui.add_text(stdscr, align.center_vertical, info_str, row=row)
+        row += 1
+        
     selected = 0
     selected_last = 0
 
