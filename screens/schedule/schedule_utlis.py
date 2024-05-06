@@ -44,7 +44,6 @@ def getschedule():
     # Ищем скрипт, содержащий нужные данные
     scripts = soup.find_all('script')
     for script in scripts:
-        print(script.text)
         if 'var zaklad_id' in script.text:
             needed_script = script.text
             break
@@ -128,5 +127,3 @@ timetable = {
 
 # Вызов функции
 next_event_id, time_until_next_event = next_event(timetable)
-print("Next event ID:", next_event_id)
-print("Time until next event:", time_until_next_event)
