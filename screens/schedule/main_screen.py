@@ -37,7 +37,6 @@ def main_schedule(stdscr):
 
         schedule = getschedule()
         weekday = datetime.now().weekday()
-        weekday = 0
         try:
             today_schedule = schedule[weekday+1]
         except:

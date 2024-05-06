@@ -43,13 +43,9 @@ def getschedule():
 
     # Ищем скрипт, содержащий нужные данные
     scripts = soup.find_all('script')
-    print(scripts)
-    print("OK3")
     for script in scripts:
-        print("OK2")
         print(script.text)
         if 'var zaklad_id' in script.text:
-            print("OK!")
             needed_script = script.text
             break
 
