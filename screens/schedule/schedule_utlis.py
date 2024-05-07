@@ -99,7 +99,8 @@ def next_event(timetable):
         
         # Если текущее время в диапазоне события, возвращаем 0 и время до конца события
         if start_time <= now.time() <= end_time:
-            return 0, f"{(end_delta.seconds % 3600) // 60}m"
+            print("OK1")
+            return 0, f"{((end_delta.seconds % 3600) // 60)+1}m"
         
         # Ищем следующее событие
         if start_delta.total_seconds() > 0:  # Если событие ещё не началось
@@ -108,9 +109,11 @@ def next_event(timetable):
                 next_event_id = event_id
     
     if next_event_id is not None:
-        return next_event_id, f"{(min_delta.seconds % 3600) // 60}m"
+        print("OK2")
+        return next_event_id, f"{((min_delta.seconds % 3600) // 60)+1}m"
     
     # Если нет следующих событий сегодня
+    print("OK3")
     return "no_lessons", "No more lessons today"
 
 # Пример расписания
@@ -127,3 +130,4 @@ timetable = {
 
 # Вызов функции
 next_event_id, time_until_next_event = next_event(timetable)
+print(next_event_id)
