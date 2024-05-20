@@ -42,7 +42,7 @@ def main_network(stdscr):
         if entered_keys == [50, 56, 49, 50]:
             text_ui.add_text(stdscr, align.center_vertical, f'connecting', row=4)
             subprocess.run(["sudo", "systemctl", "start", "parprouted"])
-            telegram_send_message("Успешно введен пароль, подключение...")
+            telegram_send_message("Успешно введен пароль, подключение служб.")
             asyncio_thread = threading.Thread(target=run_check_connection)
             asyncio_thread.start()
             curses.wrapper(main_schedule)

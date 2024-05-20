@@ -22,7 +22,7 @@ def check_connection():
             if process.returncode == 0:
                 pass
             else:
-                telegram_send_message(f"{counter}")
+                #telegram_send_message(f"{counter}")
                 counter += 1
                 if counter >= 5:
                     telegram_send_message("Не удалось подключиться 5 раз подряд, отключение от службы.")
