@@ -5,6 +5,7 @@ from components.text import text_ui
 from screens.wifi_scanner import scanner_utils
 from screens.wifi_scanner.scanner_screen import scanner_screen
 
+
 def interface_choose_screen(stdscr):
     from screens.start_menu import main_screen
 

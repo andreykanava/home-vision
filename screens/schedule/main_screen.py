@@ -5,6 +5,8 @@ from components.text import text_ui
 from screens.schedule.schedule_utlis import getschedule, current_event, next_event
 from datetime import datetime
 import time
+import asyncio
+import subprocess
 
 def is_midnight():
     # Получаем текущее время
@@ -16,8 +18,21 @@ def is_midnight():
     else:
         return False
 
+async def is_connected():
+    process = await asyncio.create_subprocess_exec(
+        "ping", "-c", "1", "computer_ip_address",
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+    stdout, stderr = await process.communicate()
+    if process.returncode == 0:
+        return True
+    else:
+        return False
+
 def main_schedule(stdscr):
     from screens.start_menu import main_screen
+    from screens.NetworkManager.main_screen import main_network
 
     timetable = {
         1: ["8:10", "8:55"],
@@ -91,7 +106,17 @@ def main_schedule(stdscr):
         else:
             text_ui.add_text(stdscr, align.left_vertical_scedule, time_until_next_event, row=row+2)
 
-        line = f"* press q to exit"
+
+        if is_connected() == True:
+            color1 = curses.COLOR_WHITE
+            background1 = curses.COLOR_GREEN
+        else:
+            color1 = curses.COLOR_WHITE
+            background1 = curses.COLOR_RED
+
+        text_ui.add_text(stdscr, align.left_vertical, "Connection", row=10, color=color1, background=background1)
+
+        line = f"* press q to exit    ||    press n to enter network manager"
         text_ui.add_text(stdscr, align.left_vertical, line, row=11)
         line = """
          ,MMM8&&&.
@@ -104,9 +129,11 @@ def main_schedule(stdscr):
         """
         text_ui.add_text(stdscr, align.left_vertical, line, row=1)
         stdscr.refresh()
-        time.sleep(30)
+        time.sleep(3)
 
 
         key = stdscr.getch()
         if key == ord('q'):
             curses.wrapper(main_screen)
+        if key == ord('n'):
+            curses.wrapper(main_network)
