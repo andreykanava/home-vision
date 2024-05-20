@@ -1,33 +1,34 @@
 import asyncio
 import subprocess
 import telebot
+import time
 
-TOKEN = ""
-CHAT_ID =
+TOKEN = "7152868520:AAElEvnIFNhZbtrjQCVfdzThsSh8HUg5qSo"
+CHAT_ID = 684248883
 def telegram_send_message(message):
     bot = telebot.TeleBot(TOKEN)
     bot.send_message(CHAT_ID, message)
-async def check_connection():
+
+def check_connection():
     counter = 0
     while True:
         try:
-            # Пингуем компьютер
-            process = await asyncio.create_subprocess_exec(
-                "ping", "-c", "1", "computer_ip_address",
+            # Выполняем команду ping
+            process = subprocess.run(
+                ["ping", "-c", "1", "192.168.0.188"],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE
             )
-            stdout, stderr = await process.communicate()
             if process.returncode == 0:
                 pass
             else:
-                counter = counter + 1
-                telegram_send_message(counter)
-                if counter >= 10:
-                    telegram_send_message("Отлючение от сети, подключение блокируеться.")
-                    subprocess.run(["sudo", "systemctl", "start", "parprouted"])
+                telegram_send_message(f"{counter}")
+                counter += 1
+                if counter >= 5:
+                    telegram_send_message("Не удалось подключиться 5 раз подряд, отключение от службы.")
+                    subprocess.run(["sudo", "systemctl", "stop", "parprouted"])
                     counter = 0
                     break
         except Exception as e:
-            telegram_send_message("Error while checking connection. ", e)
-        await asyncio.sleep(1)
+            telegram_send_message(f"Error while checking connection: {e}")
+        time.sleep(1)

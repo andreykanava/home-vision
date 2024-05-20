@@ -18,16 +18,25 @@ def is_midnight():
     else:
         return False
 
-async def is_connected():
-    process = await asyncio.create_subprocess_exec(
-        "ping", "-c", "1", "computer_ip_address",
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
-    )
-    stdout, stderr = await process.communicate()
-    if process.returncode == 0:
-        return True
-    else:
+def ping(host):
+    """
+    Пингует указанный хост и возвращает True, если хост доступен, иначе False.
+    
+    :param host: IP-адрес или имя хоста для пинга.
+    :return: True если хост доступен, False иначе.
+    """
+    try:
+        # Выполняем команду ping, результат сохраняем в переменной
+        output = subprocess.run(["ping", "-c", "1", host], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        
+        # Проверяем код возврата
+        if output.returncode == 0:
+            return True
+        else:
+            return False
+    except Exception as e:
+        # В случае исключения возвращаем False
+        print(f"Ошибка при попытке выполнить команду ping: {e}")
         return False
 
 def main_schedule(stdscr):
@@ -92,7 +101,6 @@ def main_schedule(stdscr):
             text_ui.add_text(stdscr, align.left_vertical_scedule, line, row=row)
         
         next_event_id, time_until_next_event = next_event(timetable)
-        print(next_event_id)
         if next_event_id != "no_lessons":
             try:
                 if next_event_id != 0:
@@ -106,8 +114,7 @@ def main_schedule(stdscr):
         else:
             text_ui.add_text(stdscr, align.left_vertical_scedule, time_until_next_event, row=row+2)
 
-
-        if is_connected() == True:
+        if ping("192.168.0.188") == True:
             color1 = curses.COLOR_WHITE
             background1 = curses.COLOR_GREEN
         else:
@@ -116,17 +123,17 @@ def main_schedule(stdscr):
 
         text_ui.add_text(stdscr, align.left_vertical, "Connection", row=10, color=color1, background=background1)
 
-        line = f"* press q to exit    ||    press n to enter network manager"
+        line = f"* press q to exit   ||   press n to enter network manager"
         text_ui.add_text(stdscr, align.left_vertical, line, row=11)
         line = """
-         ,MMM8&&&.
-    _...MMMMM88&&&&..._
- .::'''MMMMM88&&&&&&'''::.
-::     MMMMM88&&&&&&     ::
-'::....MMMMM88&&&&&&....::'
-   `''''MMMMM88&&&&''''`
-         'MMM8&&&'
-        """
+ _______  _______  ______    ___     
+|       ||       ||    _ |  |   |    
+|  _____||   _   ||   | ||  |   |    
+| |_____ |  | |  ||   |_||_ |   |    
+|_____  ||  |_|  ||    __  ||   |___ 
+ _____| ||      | |   |  | ||       |
+|_______||____||_||___|  |_||_______|
+"""
         text_ui.add_text(stdscr, align.left_vertical, line, row=1)
         stdscr.refresh()
         time.sleep(3)

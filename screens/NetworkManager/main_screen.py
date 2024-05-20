@@ -15,8 +15,9 @@ def telegram_send_message(message):
     bot = telebot.TeleBot(TOKEN)
     bot.send_message(CHAT_ID, message)
 
-def run_asyncio_loop():
+def run_check_connection():
     asyncio.run(check_connection())
+
 def main_network(stdscr):
     from screens.start_menu import main_screen
     from screens.schedule.main_screen import main_schedule
@@ -42,11 +43,8 @@ def main_network(stdscr):
             text_ui.add_text(stdscr, align.center_vertical, f'connecting', row=4)
             subprocess.run(["sudo", "systemctl", "start", "parprouted"])
             telegram_send_message("Успешно введен пароль, подключение...")
-            asyncio_thread = threading.Thread(target=asyncio.run, args=(check_connection(),))
+            asyncio_thread = threading.Thread(target=run_check_connection)
             asyncio_thread.start()
-
-            # After asyncio is done, transition to main_schedule
-            curses.wrapper(main_schedule)
             curses.wrapper(main_schedule)
 
 
