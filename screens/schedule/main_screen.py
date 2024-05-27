@@ -7,6 +7,7 @@ from datetime import datetime
 import time
 import asyncio
 import subprocess
+from pyfiglet import Figlet
 
 def is_midnight():
     # Получаем текущее время
@@ -125,15 +126,10 @@ def main_schedule(stdscr):
 
         line = f"* press q to exit   ||   press n to enter network manager"
         text_ui.add_text(stdscr, align.left_vertical, line, row=11)
-        line = """
- _______  _______  ______    ___     
-|       ||       ||    _ |  |   |    
-|  _____||   _   ||   | ||  |   |    
-| |_____ |  | |  ||   |_||_ |   |    
-|_____  ||  |_|  ||    __  ||   |___ 
- _____| ||      | |   |  | ||       |
-|_______||____||_||___|  |_||_______|
-"""
+        current_time = datetime.now().strftime("%H : %M")
+        f = Figlet(font='basic')
+        line ="\n"+f.renderText(current_time)
+
         text_ui.add_text(stdscr, align.left_vertical, line, row=1)
         stdscr.refresh()
         time.sleep(3)
