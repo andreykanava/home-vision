@@ -2,7 +2,7 @@ import curses
 from utils import align, menu_track
 from components.menu import menu_ui
 from components.text import text_ui
-from screens.schedule.schedule_utlis import getschedule, current_event, next_event
+from screens.schedule.schedule_utlis import getschedule, current_event, next_event, get_weather_forecast
 from datetime import datetime
 import time
 import asyncio
@@ -41,9 +41,39 @@ def ping(host):
         print(f"Ошибка при попытке выполнить команду ping: {e}")
         return False
 
+    
+def choose(stdscr):
+    from screens.start_menu import main_screen
+    stdscr.clear()
+    curses.curs_set(0)
+
+    list = ["Lessons", "Forecast", "Back"]
+
+    selected = 0
+    selected_last = 0
+
+    menu_ui.scroll_menu(stdscr, align.center_vertical, list, 5, curses.COLOR_BLACK, curses.COLOR_WHITE, selected)
+    stdscr.refresh()
+
+    while True:
+        selected = menu_track.menu_select(stdscr, list, selected)
+        if selected == "Enter":
+            if selected_last == 0:
+                curses.wrapper(main_schedule)
+                pass
+            elif selected_last == 1:
+                curses.wrapper(main_forecast)
+                pass
+            elif selected_last == 2:
+                curses.wrapper(main_screen)
+                pass
+        else:
+            stdscr.clear()
+            menu_ui.scroll_menu(stdscr, align.center_vertical, list, 5, curses.COLOR_BLACK, curses.COLOR_WHITE, selected)
+            selected_last = selected
+
 def main_schedule(stdscr):
     from screens.start_menu import main_screen
-    from screens.NetworkManager.main_screen import main_network
 
     timetable = {
         1: ["8:10", "8:55"],
@@ -170,7 +200,7 @@ def main_schedule(stdscr):
 
         text_ui.add_text(stdscr, align.left_vertical, "Connection", row=10, color=color1, background=background1)
 
-        line = f"* press q (S16) to exit | n (S4) for Network Manager"
+        line = f"* press q (S16) to exit"
         text_ui.add_text(stdscr, align.left_vertical, line, row=11)
         current_time = datetime.now().strftime("%H : %M")
         f = Figlet(font='basic')
@@ -183,8 +213,6 @@ def main_schedule(stdscr):
         key = stdscr.getch()
         if key == ord('q'):
             curses.wrapper(main_screen)
-        if key == ord('n'):
-            curses.wrapper(main_network)
 
         pressed_key = None
         pressed_key = readLine(L1, ["1", "2", "3", "A"]) or pressed_key
@@ -192,10 +220,110 @@ def main_schedule(stdscr):
         pressed_key = readLine(L3, ["7", "8", "9", "C"]) or pressed_key
         pressed_key = readLine(L4, ["*", "0", "#", "D"]) or pressed_key
         if pressed_key is not None:
-            if pressed_key == "A":
+            if pressed_key == "D":
                 GPIO.cleanup()
-                curses.wrapper(main_network)
                 curses.wrapper(main_screen)
+
+        time.sleep(0.1)
+
+
+
+def main_forecast(stdscr):
+    from screens.start_menu import main_screen
+
+    L1 = 5
+    L2 = 6
+    L3 = 13
+    L4 = 19
+
+    C1 = 12
+    C2 = 16
+    C3 = 20
+    C4 = 21
+
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
+
+    GPIO.setup(L1, GPIO.OUT)
+    GPIO.setup(L2, GPIO.OUT)
+    GPIO.setup(L3, GPIO.OUT)
+    GPIO.setup(L4, GPIO.OUT)
+
+    GPIO.setup(C1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(C2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(C3, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(C4, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+    #            ^` ^l      ^o  ^e ^`           ^o  ^a   ^a ^b   ^o     ^o             
+    key_states = {
+        '1': False, '2': False, '3': False, 'A': False,
+        '4': False, '5': False, '6': False, 'B': False,
+        '7': False, '8': False, '9': False, 'C': False,
+        '*': False, '0': False, '#': False, 'D': False
+    }
+    def readLine(line, characters):
+        pressed_key = None
+        GPIO.output(line, GPIO.HIGH)
+        for i, char in enumerate(characters):
+            if GPIO.input([C1, C2, C3, C4][i]) == 1:
+                if not key_states[char]:
+                    print(char)
+                    pressed_key = char
+                    key_states[char] = True
+            else:
+                key_states[char] = False
+        GPIO.output(line, GPIO.LOW)
+        return pressed_key
+
+    api_key = '9f648ff524736faef82e196f838815aa'
+    city = 'Odesa'
+    while True:
+        stdscr.clear()
+        stdscr.nodelay(True)
+        text_ui.add_text(stdscr, align.center_vertical, f'{datetime.now().strftime("%Y-%m-%d    %H:%M")}', row=-12)
+    
+        if is_midnight():
+            forecast = get_weather_forecast(api_key, city)
+        try:
+           if forecast:
+               pass
+        except:
+           forecast = get_weather_forecast(api_key, city)
+           text_ui.add_text(stdscr, align.center_vertical, f'updated!') 
+
+        text_ui.add_text(stdscr, align.center_vertical, "\n"+forecast, row=-10) 
+
+        
+
+        if ping("192.168.0.188") == True:
+            color1 = curses.COLOR_WHITE
+            background1 = curses.COLOR_GREEN
+        else:
+            color1 = curses.COLOR_WHITE
+            background1 = curses.COLOR_RED
+
+        text_ui.add_text(stdscr, align.left_vertical, "Connection", row=10, color=color1, background=background1)
+
+        line = f"* press q (S16) to exit"
+        text_ui.add_text(stdscr, align.left_vertical, line, row=11)
+        current_time = datetime.now().strftime("%H : %M")
+        f = Figlet(font='basic')
+        line ="\n"+f.renderText(current_time)
+
+        text_ui.add_text(stdscr, align.left_vertical, line, row=1)
+        stdscr.refresh()
+
+
+        key = stdscr.getch()
+        if key == ord('q'):
+            curses.wrapper(main_screen)
+
+        pressed_key = None
+        pressed_key = readLine(L1, ["1", "2", "3", "A"]) or pressed_key
+        pressed_key = readLine(L2, ["4", "5", "6", "B"]) or pressed_key
+        pressed_key = readLine(L3, ["7", "8", "9", "C"]) or pressed_key
+        pressed_key = readLine(L4, ["*", "0", "#", "D"]) or pressed_key
+        if pressed_key is not None:
             if pressed_key == "D":
                 GPIO.cleanup()
                 curses.wrapper(main_screen)

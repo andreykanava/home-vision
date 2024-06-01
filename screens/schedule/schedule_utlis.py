@@ -113,18 +113,25 @@ def next_event(timetable):
     # Если нет следующих событий сегодня
     return "no_lessons", "No more lessons today"
 
-# Пример расписания
-timetable = {
-    1: ["8:10", "8:55"],
-    2: ["9:00", "9:45"],
-    3: ["9:50", "10:35"],
-    4: ["10:45", "11:30"],
-    5: ["12:00", "12:45"],
-    6: ["12:55", "13:40"],
-    7: ["13:50", "14:35"],
-    8: ["14:45", "15:30"]
-}
 
-# Вызов функции
-next_event_id, time_until_next_event = next_event(timetable)
-print(next_event_id)
+def get_weather_forecast(api_key, city):
+    # Запрос к OpenWeatherMap API для получения текущего прогноза погоды
+    
+    response = requests.get(url)
+    data = response.json()
+
+    # Форматирование прогноза погоды в компактный текст
+    forecast_text = f"Прогноз погоды для {city}:\n"
+    forecast_text += "-" * 30 + "\n"
+
+    for forecast in data['list'][:8]:  # Берем 8 временных точек, чтобы уложиться в 10 строк текста
+        dt_txt = forecast['dt_txt']
+        temp = forecast['main']['temp']
+        weather_description = forecast['weather'][0]['description']
+        
+        # Форматирование времени в часах и минуты
+        time = dt_txt.split(" ")[1][:5]
+
+        forecast_text += f"{time}: {weather_description.capitalize()} ({temp}°C)\n"
+
+    return forecast_text.strip()

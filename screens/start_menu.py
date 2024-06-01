@@ -3,8 +3,8 @@ from utils import align, menu_track
 from components.menu import menu_ui
 from components.text import text_ui
 #from screens.wifi_scanner.interface_choose_screen import interface_choose_screen
-from screens.schedule.main_screen import main_schedule
-from screens.NetworkManager.main_screen import main_network
+from screens.schedule.main_screen import choose
+#from screens.NetworkManager.main_screen import main_network
 from screens.VPN.main_screen import action
 
 def main_screen(stdscr):
@@ -23,10 +23,10 @@ def main_screen(stdscr):
         selected = menu_track.menu_select(stdscr, list, selected)
         if selected == "Enter":
             if selected_last == 0:
-                curses.wrapper(main_schedule)
+                curses.wrapper(choose)
                 pass
             elif selected_last == 1:
-                curses.wrapper(main_network)
+                #curses.wrapper(main_network)
                 pass
             elif selected_last == 2:
                 curses.wrapper(action)
