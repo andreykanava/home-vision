@@ -21,7 +21,6 @@ def run_check_connection():
 
 def main_network(stdscr):
     from screens.start_menu import main_screen
-    from screens.schedule.main_screen import main_schedule
 
     L1 = 5
     L2 = 6
@@ -70,7 +69,7 @@ def main_network(stdscr):
         stdscr.clear()
         stdscr.nodelay(True)
         text_ui.add_text(stdscr, align.center_vertical, f'Enter network password', row=-3)
-        text_ui.add_text(stdscr, align.center_vertical, f'‾ ‾ ‾ ‾', row=1)
+        text_ui.add_text(stdscr, align.center_vertical, f'- - - -', row=1)
         text_ui.add_text(stdscr, align.center_vertical, f'Back (S16)', row=5, color=curses.COLOR_BLACK, background=curses.COLOR_WHITE)
         try:
             if entered_keys:
@@ -90,7 +89,7 @@ def main_network(stdscr):
             asyncio_thread = threading.Thread(target=run_check_connection)
             asyncio_thread.start()
             GPIO.cleanup()
-            curses.wrapper(main_schedule)
+            curses.wrapper(main_screen)
 
 
         elif len(entered_keys) == 4 and entered_keys != [50, 56, 49, 50] or len(entered_keys) == 4 and entered_keys != ["2", "8", "1", "2"]:
