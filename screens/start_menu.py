@@ -6,6 +6,7 @@ from components.text import text_ui
 from screens.schedule.main_screen import choose
 from screens.NetworkManager.main_screen import main_network
 from screens.VPN.main_screen import action
+import time
 
 def main_screen(stdscr):
     stdscr.clear()
@@ -37,4 +38,5 @@ def main_screen(stdscr):
             stdscr.clear()
             menu_ui.scroll_menu(stdscr, align.center_vertical, list, 5, curses.COLOR_BLACK, curses.COLOR_WHITE, selected)
             selected_last = selected
+        time.sleep(0.1)
     
