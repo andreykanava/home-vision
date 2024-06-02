@@ -41,7 +41,7 @@ def choose_vpn(stdscr):
     from screens.start_menu import main_screen
     stdscr.clear()
     stdscr.nodelay(True)
-    folder_path = Path('/Users/andrejkanava/Documents/home-vision/screens/VPN/configs/')
+    folder_path = Path('/home/pi/home-vision/screens/VPN/configs/')
     files = [f.stem for f in folder_path.glob('*.ovpn')]
     files = sorted(files)
 
@@ -84,7 +84,7 @@ def choose_vpn(stdscr):
         if selected == "Enter":
             config_name = files[selected_last]
             text_ui.add_text(stdscr, align.center_vertical, f'connecting', row=8)
-            connect_vpn(f'/Users/andrejkanava/Documents/home-vision/screens/VPN/configs/{config_name}.ovpn', '/Users/andrejkanava/Documents/home-vision/screens/VPN/credentials.txt')
+            connect_vpn(f'/home/pi/home-vision/screens/VPN/configs/{config_name}.ovpn', '/home/pi/home-vision/screens/VPN/credentials.txt')
             time.sleep(3)
             curses.wrapper(main_screen)
         else:
