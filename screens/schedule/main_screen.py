@@ -291,7 +291,11 @@ def main_forecast(stdscr):
            forecast = get_weather_forecast(api_key, city)
            text_ui.add_text(stdscr, align.center_vertical, f'updated!') 
 
-        text_ui.add_text(stdscr, align.center_vertical, "\n"+forecast, row=-10) 
+        forelist = forecast.split("\n")
+        row = -10
+        for i in forelist:
+            text_ui.add_text(stdscr, align.left_vertical, i, row=row)
+            row += 1
 
         
 
