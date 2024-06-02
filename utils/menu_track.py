@@ -58,7 +58,8 @@ def menu_select(stdscr, menu, selected = 0):
             key = KEY_ENTER
         elif pressed_key == "8":
             key = KEY_DOWN
-    
+        else:
+            key = stdscr.getch()
     else:
         key = stdscr.getch()
 
