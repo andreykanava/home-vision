@@ -117,5 +117,5 @@ def main_screen(stdscr):
             stdscr.clear()
             menu_ui.scroll_menu(stdscr, align.center_vertical, list, 5, curses.COLOR_BLACK, curses.COLOR_WHITE, selected)
             selected_last = selected
-            time.sleep(0.4)
+            time.sleep(0.1)
     
