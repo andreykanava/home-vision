@@ -24,8 +24,7 @@ def menu_select(stdscr, menu, selected = 0):
     GPIO.setup(C2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(C3, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(C4, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-    #            ^` ^l      ^o  ^e ^`           ^o  ^a   ^a ^b   ^o     ^o             
+            
     key_states = {
         '1': False, '2': False, '3': False, 'A': False,
         '4': False, '5': False, '6': False, 'B': False,
