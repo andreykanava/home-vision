@@ -64,14 +64,20 @@ def menu_select(stdscr, menu, selected = 0):
         key = stdscr.getch()
 
     if key == KEY_UP and selected > 0:
+        GPIO.cleanup()
         return selected - 1
     elif key == KEY_UP and selected == 0:
+        GPIO.cleanup()
         return len(menu)-1
     elif key == KEY_DOWN and selected < len(menu)-1:
+        GPIO.cleanup()
         return selected + 1
     elif key == KEY_DOWN and selected == len(menu) -1:
+        GPIO.cleanup()
         return 0
     elif key == KEY_ENTER or key in [10, 13]:
+        GPIO.cleanup()
         return "Enter"
     else:
+        GPIO.cleanup()
         return selected
