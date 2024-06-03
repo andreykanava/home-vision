@@ -65,6 +65,8 @@ def main_screen(stdscr):
         GPIO.output(line, GPIO.LOW)
         return pressed_key
 
+    time.sleep(0.4)
+
     while True:
         
         pressed_key = None
