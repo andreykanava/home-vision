@@ -143,6 +143,9 @@ def choose_vpn(stdscr):
                 key = KEY_ENTER
             elif pressed_key == "8":
                 key = KEY_DOWN
+            elif pressed_key == "D":
+                GPIO.cleanup()
+                curses.wrapper(main_screen)
             else:
                 key = stdscr.getch()
         else:
@@ -166,7 +169,8 @@ def choose_vpn(stdscr):
             config_name = files[selected_last]
             text_ui.add_text(stdscr, align.center_vertical, f'connecting', row=8)
             connect_vpn(f'configs/{config_name}.ovpn', 'credentials.txt')
-            time.sleep(3)
+            time.sleep(2)
+            GPIO.cleanup()
             curses.wrapper(main_screen)
         else:
             stdscr.clear()
