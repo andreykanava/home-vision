@@ -248,7 +248,7 @@ def choose_vpn(stdscr):
         if selected == "Enter":
             config_name = files[selected_last]
             text_ui.add_text(stdscr, align.center_vertical, f'connecting', row=8)
-            connect_vpn(f'configs/{config_name}.ovpn', 'credentials.txt')
+            connect_vpn(f'/home/pi/home-vision/screens/VPN/configs/{config_name}.ovpn', '/home/pi/home-vision/screens/VPN/credentials.txt')
             time.sleep(2)
             GPIO.cleanup()
             curses.wrapper(main_screen)
