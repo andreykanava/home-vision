@@ -234,15 +234,16 @@ def choose_vpn(stdscr):
         if key == KEY_UP and selected > 0:
             selected = selected - 1
         elif key == KEY_UP and selected == 0:
-            selected = len(list)-1
-        elif key == KEY_DOWN and selected < len(list)-1:
+            selected = len(files)-1
+        elif key == KEY_DOWN and selected < len(files)-1:
             selected = selected + 1
-        elif key == KEY_DOWN and selected == len(list) -1:
+        elif key == KEY_DOWN and selected == len(files) -1:
             selected = 0
         elif key == KEY_ENTER or key in [10, 13]:
             selected = "Enter"
         else:
             selected = selected
+        time.sleep(0.1)
 
 
         if selected == "Enter":
