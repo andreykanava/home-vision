@@ -3,7 +3,7 @@ from utils import align, menu_track
 from components.menu import menu_ui
 from components.text import text_ui
 from screens.NetworkManager.network_util import check_connection, TOKEN, CHAT_ID
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import telebot
 import asyncio
@@ -11,13 +11,63 @@ import subprocess
 from curses import KEY_ENTER
 import threading
 import RPi.GPIO as GPIO
+import json
+
+
+FILENAME = 'connection_history.json'
+
+def add_event(event_type):
+    """Добавляет событие в JSON файл"""
+    now = datetime.now()
+    event = {now.isoformat(): event_type}
+    
+    try:
+        # Чтение существующих данных из файла
+        with open(FILENAME, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        # Если файл не найден или пуст, создаем новый словарь
+        data = {}
+    
+    # Добавление нового события
+    data.update(event)
+    
+    # Запись данных обратно в файл
+    with open(FILENAME, 'w', encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
+
+def remove_old_events():
+    """Удаляет события старше одного месяца из JSON файла"""
+    try:
+        # Чтение существующих данных из файла
+        with open(FILENAME, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        # Если файл не найден или пуст, нет ничего для удаления
+        return
+    
+    # Текущая дата и время
+    now = datetime.now()
+    one_month_ago = now - timedelta(days=30)
+    
+    # Фильтрация событий
+    filtered_data = {k: v for k, v in data.items() if datetime.fromisoformat(k) > one_month_ago}
+    
+    # Запись отфильтрованных данных обратно в файл
+    with open(FILENAME, 'w', encoding='utf-8') as file:
+        json.dump(filtered_data, file, ensure_ascii=False, indent=4)
+
 
 def telegram_send_message(message):
     bot = telebot.TeleBot(TOKEN)
     bot.send_message(CHAT_ID, message)
 
 def run_check_connection():
-    asyncio.run(check_connection())
+    try:
+        asyncio.run(check_connection())
+    except:
+        add_event("disconnect")
+        remove_old_events()
 
 def main_network(stdscr):
     from screens.start_menu import main_screen
@@ -88,6 +138,8 @@ def main_network(stdscr):
             telegram_send_message("Успешно введен пароль, подключение служб.")
             asyncio_thread = threading.Thread(target=run_check_connection)
             asyncio_thread.start()
+            add_event("connect")
+            remove_old_events()
             GPIO.cleanup()
             curses.wrapper(main_screen)
 
